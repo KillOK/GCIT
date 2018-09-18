@@ -40,7 +40,6 @@ class Menu {
 		while (s.toLowerCase().equals("yes")) {
 			new Game().start();
 			menu();
-			break;
 		}
 	}
 }
@@ -96,7 +95,7 @@ class Game {
 					}
 					System.out.println("It's your turn " + player.getPlayerName() + " \n" + "There are " + magicNumber
 							+ " chips remaining. You may take any number of chips from 1 to "
-							+ (((magicNumber - 1) / 2) + 1) + "\nHow many will you take, Emily?");
+							+ (((magicNumber - 1) / 2) + 1) + "\nHow many will you take, "+player.getPlayerName()+"?");
 					enterNumber();
 					magicNumber -= yourNumber;
 					player.setCookies(player.getCookies() + yourNumber);
@@ -190,7 +189,6 @@ class Player {
 	}
 
 	private String PlayerId;
-
 	private String playerName;
 	public int cookies;
 	
