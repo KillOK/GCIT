@@ -13,11 +13,7 @@ import java.util.Scanner;
 public class Ex2ChipsGame {
 
 	public static void main(String[] args) {
-		
-		Menu.menu();
-		System.out.println("Good bue!");
-		System.out.println("******************************************************************************");
-
+		new MenuUI().start();
 	}
 
 }
@@ -27,36 +23,57 @@ public class Ex2ChipsGame {
  * @author Flex
  *	UI menu for Game start and continue...
  */
-class Menu {
-	static Scanner scn = new Scanner(System.in);
+class MenuUI {
+	static final String border = "******************************************************************************";
+	Scanner scn = new Scanner(System.in);
+	String s ;
 	
+	public void start() {
+		greetings();
+		menu();
+		farewell();
+	}
 	/**
 	 * Starts the game again while user reply yes
 	 */
-	static void menu() {
-		System.out.println("******************************************************************************");
+	void menu() {
+		System.out.println(border);
 		System.out.println("Do you want to play?\nPrint yes to play...");
-		String s = scn.next();
-		while (s.toLowerCase().equals("yes")) {
-			new Game().start();
-			menu();
+		if(scn.hasNext()) {
+			s = scn.next();
+			while (s.toLowerCase().equals("yes")) {
+				new Game().start();
+				menu();
+			}
 		}
+	}
+	
+	public void greetings() {
+		System.out.println(border);
+		System.out.println("Hello!");
+	}
+	
+	public void farewell() {
+		System.out.println(border);
+		System.out.println("Good bue!");
+		System.out.println(border);
 	}
 }
 
 
 class Game {
+	
+	static final String border = "******************************************************************************";
 
-	private Player[] players = { new Player(), new Player() };
-
-	// count tries
-	int buffer;
-
-	// random number of chips
-	int magicNumber;
-
-	// player choice
-	int yourNumber;
+	private Player[] players = { new Player(), new Player() };	// Array of players
+	
+	int buffer;					// count tries
+	int magicNumber;			// number of chips in the pile 								(depends from user input)
+	int yourNumber;				// player choice 			   								(depends from user input)
+	int minPileCapacity = 3;	// minPileCapacity											(depends from user input)
+	int maxPileCapacity = 999;	// maxPileCapacity											(depends from user input)
+	int minPlayerChoice = 1;	// minPlayerChoice											(depends from user input)
+	int maxPlayerChoice;		// maxPlayerChoice - middle value of the pile				(depends from user magicNumber)
 
 	Scanner sc = new Scanner(System.in);
 
@@ -67,7 +84,7 @@ class Game {
 			System.out.println(p.getPlayerId() + " name: " + p.getPlayerName());
 		}
 		magicNumber = enterInitialChipsNumber();
-		System.out.println("******************************************************************************");
+		System.out.println(border);
 	}
 
 	public String setNames() {
@@ -99,8 +116,8 @@ class Game {
 					enterNumber();
 					magicNumber -= yourNumber;
 					player.setCookies(player.getCookies() + yourNumber);
-					System.out
-							.println("******************************************************************************");
+					System.out.println(border);
+					
 				}
 			}
 		}
@@ -125,22 +142,25 @@ class Game {
 	 * @return the initial value of the cookis
 	 */
 	public int enterInitialChipsNumber() {
-		int chipsNumber = 0;
+		 int chipsNumber = 0;
 
 		System.out.println("How many chips does the initial pile contain?");
-		if (sc.hasNextInt()) {
-			chipsNumber = sc.nextInt();
-			if (chipsNumber > 1000 || chipsNumber < 3) {
-				System.out.println("You have to start with at least 3 chips and less then 1000");
+		if(sc.hasNext()) {
+			if (sc.hasNextInt()) {
+				chipsNumber = sc.nextInt();
+				if (chipsNumber > maxPileCapacity || chipsNumber < minPileCapacity) {
+					System.out.println("You have to start with at least 3 chips and less then "+maxPileCapacity);
+					chipsNumber = enterInitialChipsNumber();
+				}
+				if (chipsNumber % 2 == 0) {
+					System.out.println("The number should be odd");
+					chipsNumber = enterInitialChipsNumber();
+				}
+			}else{
+				System.out.println("You should enter number from 1 to 1000");
+				sc.next();
 				chipsNumber = enterInitialChipsNumber();
 			}
-			if (chipsNumber % 2 == 0) {
-				System.out.println("The number should be odd");
-				chipsNumber = enterInitialChipsNumber();
-			}
-		} else {
-			System.out.println("You should enter number from 1 to 1000");
-			chipsNumber = enterInitialChipsNumber();
 		}
 		return chipsNumber;
 	}
@@ -159,11 +179,12 @@ class Game {
 			}
 		} else {
 			System.out.println("Number should be between 1 and " + (((magicNumber - 1) / 2) + 1));
+			sc.next();
 			enterNumber();
 		}
 	}
-
 }
+
 /**
  * 
  * @author Flex
